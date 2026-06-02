@@ -361,6 +361,7 @@ const FEATURED_ARTICLES=[];
 
 // CONFIG — driven by sheet, these are fallback defaults
 let CFG={
+  stream_link:'',
   current_fotw:'Thank You for Smoking',
   current_recommender:'Reva',
   current_reco_index:18,
@@ -488,6 +489,7 @@ async function loadConfig(){
       if(k==='current_reco_index')CFG.current_reco_index=parseInt(v)||18;
       if(k==='week_start')CFG.week_start=v;
       if(k==='month_label')CFG.month_label=v;
+      if(k==='stream_link')CFG.stream_link=v;
     });
   }catch(e){console.warn('Config load failed, using defaults');}
 }
@@ -525,6 +527,7 @@ async function renderThisWeek(entries,flags){
       <div class="fotw-week-label">Week ${getWeekNumber()} of 2026 · Film of the Week</div>
       <div class="fotw-title">${filmTitle||'Awaiting announcement…'}</div>
       <div class="fotw-recommender">Recommended by <span>${CFG.current_recommender}</span></div>
+      ${CFG.stream_link ? `<a href="${CFG.stream_link}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#1A1A1A;color:#C9A84C;text-decoration:none;padding:8px 18px;border-radius:3px;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border:1px solid #C9A84C;margin-bottom:1.25rem;">▶ Watch Now</a>` : ''}
       <div class="stats-row">
         <div><div class="stat-value">${isNaN(average)?'—':average.toFixed(1)}</div><div class="stat-label">Group Avg</div></div>
         <div><div class="stat-value">${scores.length}</div><div class="stat-label">Reviews</div></div>
