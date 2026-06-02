@@ -527,18 +527,7 @@ async function renderThisWeek(entries,flags){
       <div class="fotw-week-label">Week ${getWeekNumber()} of 2026 · Film of the Week</div>
       <div class="fotw-title">${filmTitle||'Awaiting announcement…'}</div>
       <div class="fotw-recommender">Recommended by <span>${CFG.current_recommender}</span></div>
-      <div style="margin-bottom:1.25rem;">
-  ${
-    CFG.stream_link
-      ? `<a href="${CFG.stream_link}" target="_blank"
-           style="display:inline-flex;align-items:center;gap:6px;background:#8C6A3A;color:#C9A84C;text-decoration:none;padding:8px 18px;border-radius:3px;font-family:Outfit,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border:1px solid #C9A84C;">
-           ▶ WATCH NOW
-         </a>`
-      : `<span style="font-size:12px;color:var(--muted);font-style:italic;">
-           Stream link coming soon
-         </span>`
-  }
-</div>
+      <div style="margin-bottom:1.25rem;">${CFG.stream_link?`<a href="${CFG.stream_link}"target="_blank"style="display:inline-flex;align-items:center;gap:6px;background:#8C6A3A;color:#C9A84C;text-decoration:none;padding:8px 18px;border-radius:3px;font-family:Outfit,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border:1px solid #C9A84C;">▶ WATCH NOW</a>`:`<span style="font-size:12px;color:var(--muted);font-style:italic;">Stream link coming soon</span>`}</div>
         <div><div class="stat-value">${isNaN(average)?'—':average.toFixed(1)}</div><div class="stat-label">Group Avg</div></div>
         <div><div class="stat-value">${scores.length}</div><div class="stat-label">Reviews</div></div>
         ${high!==null?`<div><div class="stat-value">${high.toFixed(1)}</div><div class="stat-label">Highest</div><div class="stat-name">${getNames(weekEntries,high)}</div></div>`:''}
