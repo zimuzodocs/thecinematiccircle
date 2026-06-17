@@ -311,11 +311,11 @@ async function loadProfile(){
   document.getElementById('badges').innerHTML=badges.map(b=>`<span class="badge ${b.cls}">${b.text}</span>`).join('');
 
   // Stats
-  document.getElementById('stats-row').innerHTML=`
+document.getElementById('stats-row').innerHTML=`
     <div><div class="stat-val">${myEntries.length}</div><div class="stat-lbl">Reviews</div></div>
     <div><div class="stat-val">${isNaN(myAvg)?'—':myAvg.toFixed(1)}</div><div class="stat-lbl">Avg Score</div></div>
-    <div><div class="stat-val">${myScores.length?Math.max(...myScores).toFixed(1):'—'}</div><div class="stat-lbl">Highest</div></div>
-    <div><div class="stat-val">${myScores.length?Math.min(...myScores).toFixed(1):'—'}</div><div class="stat-lbl">Lowest</div></div>`;
+    <div><div class="stat-val">${myScores.length?Math.max(...myScores).toFixed(1):'—'}</div><div class="stat-lbl">Highest</div><div style="font-size:10px;color:var(--muted);margin-top:2px;">${myScores.length?getTitle(myEntries.find(e=>getScore(e)===Math.max(...myScores))):''}  </div></div>
+    <div><div class="stat-val">${myScores.length?Math.min(...myScores).toFixed(1):'—'}</div><div class="stat-lbl">Lowest</div><div style="font-size:10px;color:var(--muted);margin-top:2px;">${myScores.length?getTitle(myEntries.find(e=>getScore(e)===Math.min(...myScores))):''}</div></div>`;
 
   // Points
   document.getElementById('total-pts').textContent=myTotal;
