@@ -106,6 +106,7 @@
       <div class="hero-info">
         <div class="member-name" id="member-name">—</div>
         <div class="member-since" id="member-since"></div>
+        <div id="letterboxd-link"></div>
         <div class="badges" id="badges"></div>
         <div class="stats-row" id="stats-row"></div>
       </div>
@@ -223,6 +224,7 @@ async function loadProfile(){
   // Find member's photo from reco_order sheet
   const recoEntry=recoRows.find(r=>(r.member||r[Object.keys(r)[0]]||'').toLowerCase()===memberName.toLowerCase());
   const photoUrl=recoEntry?.photo||recoEntry?.Photo||'';
+  const letterboxdUrl=recoEntry?.letterboxd||recoEntry?.Letterboxd||'';
 
   // Filter entries for this member
   const myEntries=entries.filter(e=>getName(e).toLowerCase()===memberName.toLowerCase());
@@ -303,6 +305,7 @@ async function loadProfile(){
 
   document.getElementById('member-name').textContent=memberName;
   document.getElementById('member-since').textContent='THE CINEMATIC CIRCLE · SEASON 2026';
+  if(letterboxdUrl){document.getElementById('letterboxd-link').innerHTML='<a href="'+letterboxdUrl+'" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#00C030;color:#fff;text-decoration:none;padding:6px 14px;border-radius:3px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-top:8px;">🎬 Letterboxd</a>';}
 
   // Badges
   document.getElementById('badges').innerHTML=badges.map(b=>`<span class="badge ${b.cls}">${b.text}</span>`).join('');
