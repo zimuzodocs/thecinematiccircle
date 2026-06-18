@@ -23,7 +23,7 @@
     .header-sub{font-size:10px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;}
 
     /* HERO */
-    .hero{max-width:500px;margin:0 auto;padding:1.5rem 1.5rem 0;}
+    .hero{max-width:900px;margin:0 auto;padding:1.5rem 1.5rem 0;}
     .hero-card{position:relative;border-radius:8px;overflow:hidden;margin-bottom:0;min-height:820px;display:flex;align-items:flex-end;}
     .poster-bg{position:absolute;inset:0;background-size:cover;background-position:center top;background-color:#2A1A0A;z-index:0;}
     .poster-overlay{position:absolute;inset:0;background:linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.92) 100%);z-index:1;}
@@ -136,6 +136,7 @@
       </div>
     </div>
     <div id="member-since" style="display:none;"></div>
+    <div id="letterboxd-link"></div>
   </div>
 
   <div class="content">
@@ -249,6 +250,7 @@ async function loadProfile(){
   // Find member's photo from reco_order sheet
   const recoEntry=recoRows.find(r=>(r.member||r[Object.keys(r)[0]]||'').toLowerCase()===memberName.toLowerCase());
   const photoUrl=recoEntry?.photo||recoEntry?.Photo||'';
+  const letterboxdUrl=recoEntry?.letterboxd||recoEntry?.Letterboxd||'';
 
   // Filter entries for this member
   const myEntries=entries.filter(e=>getName(e).toLowerCase()===memberName.toLowerCase());
@@ -329,6 +331,7 @@ async function loadProfile(){
 
   document.getElementById('member-name').textContent=memberName;
   document.getElementById('member-since').textContent='THE CINEMATIC CIRCLE · SEASON 2026';
+  if(letterboxdUrl){document.getElementById('letterboxd-link').innerHTML='<a href="'+letterboxdUrl+'" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#00C030;color:#fff;text-decoration:none;padding:6px 14px;border-radius:3px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-top:8px;">🎬 Letterboxd</a>';}
 
   // Badges
   document.getElementById('badges').innerHTML=badges.map(b=>`<span class="badge ${b.cls}">${b.text}</span>`).join('');
@@ -337,8 +340,8 @@ async function loadProfile(){
   document.getElementById('stats-row').innerHTML=`
     <div><div class="stat-val">${myEntries.length}</div><div class="stat-lbl">Reviews</div></div>
     <div><div class="stat-val">${isNaN(myAvg)?'—':myAvg.toFixed(1)}</div><div class="stat-lbl">Avg Score</div></div>
-    <div><div class="stat-val">${myScores.length?Math.max(...myScores).toFixed(1):'—'}</div><div class="stat-lbl">Highest</div></div>
-    <div><div class="stat-val">${myScores.length?Math.min(...myScores).toFixed(1):'—'}</div><div class="stat-lbl">Lowest</div></div>`;
+    <div><div class="stat-val">${myScores.length?Math.max(...myScores).toFixed(1):'—'}</div><div class="stat-lbl">Highest</div><div style="font-size:10px;color:var(--muted);margin-top:2px;">${myScores.length?getTitle(myEntries.find(e=>getScore(e)===Math.max(...myScores)))||'':''}</div></div>
+    <div><div class="stat-val">${myScores.length?Math.min(...myScores).toFixed(1):'—'}</div><div class="stat-lbl">Lowest</div><div style="font-size:10px;color:var(--muted);margin-top:2px;">${myScores.length?getTitle(myEntries.find(e=>getScore(e)===Math.min(...myScores)))||'':''}</div></div>
 
   // Points
   document.getElementById('total-pts').textContent=myTotal;
