@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TCC — Member Profile</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="icon" href="favicon.png" type="image/png"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     :root{
@@ -52,16 +53,20 @@
 
     /* DESKTOP TWO COLUMN LAYOUT */
     .profile-layout{display:flex;gap:2rem;max-width:1100px;margin:0 auto;padding:2rem 1.5rem 3rem;align-items:flex-start;}
-    .poster-col{flex-shrink:0;width:320px;}
-    .poster-wrap{display:block;padding:0;}
+    .poster-col{flex-shrink:0;width:300px;}
+    .poster-wrap{padding:0;width:300px;}
+    .poster{max-width:300px !important;}
     .sidebar{flex:1;min-width:0;}
     .content{padding:0;}
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+   
+    @media(min-width:769px){.poster-col{position:sticky;top:72px;}}
     @media(max-width:768px){
-      .profile-layout{flex-direction:column;padding:0 0 3rem;}
+      .profile-layout{flex-direction:column;gap:0;padding:0 0 3rem;}
       .poster-col{width:100%;}
-      .poster-wrap{display:flex;justify-content:center;padding:2rem 1rem 1.5rem;}
-      .sidebar{padding:0 1.25rem;}
+      .poster-wrap{display:flex;justify-content:center;padding:2rem 1rem 1.5rem;width:100%;}
+      .poster{max-width:360px !important;}
+      .sidebar{padding:0 1.25rem;width:100%;}
     }
     @media(max-width:500px){.grid-2{grid-template-columns:1fr;}}
 
