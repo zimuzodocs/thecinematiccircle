@@ -145,9 +145,7 @@
 
     <!-- RIGHT: STATS -->
     <div class="right-col">
-      <div class="member-name-title" id="member-name-title">—</div>
-      <div class="member-personality" id="member-personality"></div>
-
+    
       <div class="grid-2">
         <!-- Points -->
         <div class="card fade">
@@ -231,7 +229,7 @@ async function loadProfile(){
   const params=new URLSearchParams(window.location.search);
   const memberName=params.get('name')||'';
   if(!memberName){document.getElementById('loading').textContent='No member specified.';return;}
-  document.title=`TCC — ${memberName}`;
+  document.title=`${memberName} · TCC`;
 
   const[entries,pointsRows,recoRows]=await Promise.all([
     safeFetch('responses'),safeFetch('points'),safeFetch('reco_order')
@@ -323,9 +321,6 @@ async function loadProfile(){
   }
 
   // Right column
-  document.getElementById('member-name-title').textContent=memberName;
-  document.getElementById('member-personality').textContent=personality+' · Season 2026';
-
   document.getElementById('total-pts').textContent=myTotal;
   document.getElementById('rank-num').textContent=myRank?`#${myRank}`:'—';
   document.getElementById('points-breakdown').innerHTML=`
