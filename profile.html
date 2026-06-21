@@ -31,19 +31,19 @@
 
     /* POSTER */
     .poster{width:280px;aspect-ratio:9/16;border-radius:10px;overflow:hidden;position:relative;box-shadow:0 16px 48px rgba(0,0,0,0.25);}
-    .poster-bg{position:absolute;inset:0;background-size:contain;background-position:center top;background:#1A1A1A;z-index:0;}
+    .poster-bg{position:absolute;inset:0;background-size:contain;background-position:center center;background-repeat:no-repeat;background-colour:#1A1A1A;z-index:0;}
     .poster-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.1) 30%,rgba(0,0,0,0.82) 65%,rgba(0,0,0,0.96) 100%);z-index:1;}
     .poster-grain{position:absolute;inset:0;opacity:0.05;z-index:2;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
     .poster-top{position:absolute;top:0;left:0;right:0;z-index:3;padding:1rem 1rem 0;display:flex;justify-content:space-between;align-items:flex-start;}
     .poster-club-label{font-size:8px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.5);}
     .poster-stamp{font-size:8px;font-weight:600;letter-spacing:0.1em;color:var(--gold-light);border:1px solid rgba(201,168,76,0.35);padding:2px 7px;border-radius:2px;}
     .poster-bottom{position:absolute;bottom:0;left:0;right:0;z-index:3;padding:1rem;}
-    .poster-role{font-family:'Playfair Display',serif;font-style:italic;font-size:11px;color:var(--gold-light);margin-bottom:4px;}
-    .poster-name{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,40px);color:#fff;line-height:1;margin-bottom:10px;text-shadow:0 2px 16px rgba(0,0,0,0.6);}
+    .poster-role{font-family:'Playfair Display',serif;font-style:italic;font-size:14px;color:var(--gold-light);margin-bottom:6px;}
+    .poster-name{font-family:'Playfair Display',serif;font-size:clamp(36px,7vw,52px);color:#fff;line-height:1;margin-bottom:12px;text-shadow:0 2px 16px rgba(0,0,0,0.6);}
     .poster-divider{width:32px;height:1px;background:var(--gold-light);margin-bottom:10px;opacity:0.5;}
     .poster-stats{display:flex;gap:1rem;margin-bottom:10px;}
-    .ps-val{font-family:'Playfair Display',serif;font-size:16px;color:var(--gold-light);line-height:1;}
-    .ps-lbl{font-size:7px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:1px;}
+    .ps-val{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold-light);line-height:1;}
+    .ps-lbl{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:2px;}
     .poster-genre{display:inline-block;font-size:8px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:2px 7px;border:1px solid rgba(201,168,76,0.35);color:var(--gold-light);border-radius:2px;margin-right:4px;margin-bottom:8px;}
     .poster-badges{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;}
     .poster-badge{font-size:8px;font-weight:600;padding:2px 6px;border-radius:999px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.65);border:1px solid rgba(255,255,255,0.12);}
