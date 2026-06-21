@@ -688,7 +688,7 @@ function renderLeaderboard(entries,pointsRows,recoOrder){
     <div class="lb-card ${i<3?'top-three':''}" style="animation-delay:${i*0.015}s">
       <div class="lb-rank ${i<3?'gold-rank':''}">${i+1}</div>
       <div class="lb-info">
-        <div class="lb-name"><a href="profile.html?name=${encodeURIComponent(m.name)}" style="color:inherit;text-decoration:none;">${m.name}</a></div>
+        '<div class="lb-name"><a href="profile.html?name='+encodeURIComponent(m.name)+'" target="_blank" style="color:inherit;text-decoration:none;">'+m.name+'</a></div>'+
         <div class="lb-breakdown">Early ${m.early} · FOTM ${m.fotm} · Trivia ${m.trivia} · MoM ${m.motm}${m.deductions?` · -${m.deductions} deductions`:''}</div>
       </div>
       <div><span class="lb-pts">${m.total}</span><span class="lb-pts-label">pts</span></div>
@@ -769,7 +769,7 @@ async function renderHistory(entries,flags){
           <span class="review-pill" style="background:${t2.bg};color:${t2.color};">${t2.label}</span>
         </div>
         <div class="review-body">
-          <div class="review-member"><a href="profile.html?name=${encodeURIComponent(getName(e))}" style="color:inherit;text-decoration:none;">${getName(e)}</a></div>
+          <div class="review-member"><a href="profile.html?name=${encodeURIComponent(getName(e))}" target="_blank" style="color:inherit;text-decoration:none;">${getName(e)}</a></div>
           ${take?`<div class="review-take">"${take}"</div>`:''}
           <div class="review-time">${formatDT(e.timestamp||e.date||'')}</div>
         </div>
