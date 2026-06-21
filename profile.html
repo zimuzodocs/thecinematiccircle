@@ -234,6 +234,7 @@ async function loadProfile(){
   const memberName=params.get('name')||'';
   if(!memberName){document.getElementById('loading').textContent='No member specified.';return;}
   document.title=`${memberName} · TCC`;
+  document.getElementById('wrapped-btn').href='wrapped.html?name='+encodeURIComponent(memberName);
 
   const[entries,pointsRows,recoRows]=await Promise.all([
     safeFetch('responses'),safeFetch('points'),safeFetch('reco_order')
