@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>TCC Wrapped — Season 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;background:#0A0A0A;}
+body{font-family:'Outfit',sans-serif;color:#fff;-webkit-tap-highlight-color:transparent;}
+
+#loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#0A0A0A;color:rgba(255,255,255,0.5);font-size:13px;letter-spacing:0.1em;text-transform:uppercase;z-index:999;}
+
+.stage{position:fixed;inset:0;display:none;}
+.stage.ready{display:block;}
+
+/* PROGRESS BARS */
+.progress-row{position:fixed;top:0;left:0;right:0;display:flex;gap:4px;padding:10px 12px 0;z-index:100;}
+.progress-track{flex:1;height:2.5px;background:rgba(255,255,255,0.2);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;width:0%;background:#fff;border-radius:2px;}
+.progress-fill.done{width:100%;}
+.progress-fill.animate{animation:fillBar var(--dur,4s) linear forwards;}
+@keyframes fillBar{from{width:0%}to{width:100%}}
+
+/* HEADER */
+.wrapped-header{position:fixed;top:18px;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:0 14px;z-index:100;}
+.wrapped-brand{font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.18em;color:rgba(255,255,255,0.6);}
+.wrapped-close{color:rgba(255,255,255,0.7);text-decoration:none;font-size:22px;line-height:1;padding:4px 8px;}
+
+/* CARDS */
+.card-wrap{position:fixed;inset:0;}
+.card{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:5rem 1.75rem 4rem;text-align:center;opacity:0;pointer-events:none;
+  transition:opacity 0.35s ease;
+}
+.card.active{opacity:1;pointer-events:all;}
+
+/* tap zones */
+.tap-zone{position:fixed;top:0;bottom:0;width:33%;z-index:90;}
+.tap-left{left:0;}
+.tap-right{right:0;}
+
+/* BACKGROUNDS per card type */
+.bg-dark{background:radial-gradient(ellipse at top, #1A1A1A 0%, #0A0A0A 70%);}
+.bg-gold{background:linear-gradient(160deg,#2A1A05 0%,#1A1205 60%,#0A0A0A 100%);}
+.bg-green{background:linear-gradient(160deg,#0A1F18 0%,#0D1A14 60%,#0A0A0A 100%);}
+.bg-blue{background:linear-gradient(160deg,#0A1420 0%,#0D1722 60%,#0A0A0A 100%);}
+.bg-red{background:linear-gradient(160deg,#2A0E0E 0%,#1A0808 60%,#0A0A0A 100%);}
+.bg-poster{background:#0A0A0A;}
+
+/* grain texture overlay */
+.grain{position:absolute;inset:0;opacity:0.035;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* TEXT STYLES */
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent,#C9A84C);margin-bottom:1.25rem;opacity:0;animation:fadeUp 0.6s ease 0.1s forwards;}
+.headline{font-family:'Playfair Display',serif;font-size:clamp(28px,8vw,44px);line-height:1.15;margin-bottom:1rem;opacity:0;animation:fadeUp 0.6s ease 0.25s forwards;}
+.headline em{font-style:italic;color:var(--accent,#C9A84C);}
+.subtext{font-size:14px;color:rgba(255,255,255,0.55);line-height:1.6;max-width:320px;opacity:0;animation:fadeUp 0.6s ease 0.4s forwards;}
+
+.big-number{font-family:'Playfair Display',serif;font-size:clamp(72px,26vw,140px);line-height:0.9;color:var(--accent,#C9A84C);margin-bottom:0.5rem;opacity:0;animation:numberPop 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s forwards;}
+.big-label{font-size:13px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.5);opacity:0;animation:fadeUp 0.5s ease 0.5s forwards;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes numberPop{from{opacity:0;transform:scale(0.7)}to{opacity:1;transform:scale(1)}}
+
+/* film mini poster row */
+.poster-row{display:flex;gap:10px;margin:1.5rem 0;justify-content:center;opacity:0;animation:fadeUp 0.6s ease 0.55s forwards;}
+.mini-poster{width:54px;height:80px;border-radius:4px;object-fit:cover;background:#1A1A1A;box-shadow:0 8px 20px rgba(0,0,0,0.5);}
+
+.film-card-poster{width:140px;height:208px;border-radius:8px;object-fit:cover;background:#1A1A1A;box-shadow:0 16px 40px rgba(0,0,0,0.6);margin-bottom:1.5rem;opacity:0;animation:numberPop 0.6s cubic-bezier(0.16,1,0.3,1) 0.15s forwards;}
+
+.score-stars{font-size:20px;letter-spacing:2px;color:var(--accent,#C9A84C);margin-top:0.5rem;opacity:0;animation:fadeUp 0.5s ease 0.5s forwards;}
+
+.divider-line{width:36px;height:1px;background:var(--accent,#C9A84C);opacity:0.5;margin:1.25rem 0;}
+
+/* badge pills on stat cards */
+.mini-stat-row{display:flex;gap:1.5rem;margin-top:1.5rem;opacity:0;animation:fadeUp 0.6s ease 0.6s forwards;}
+.mini-stat{text-align:center;}
+.mini-stat-val{font-family:'Playfair Display',serif;font-size:22px;color:var(--accent,#C9A84C);}
+.mini-stat-lbl{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:2px;}
+
+/* FINAL POSTER CARD */
+.final-poster{width:min(78vw,300px);aspect-ratio:9/16;border-radius:12px;overflow:hidden;position:relative;box-shadow:0 24px 70px rgba(0,0,0,0.6);opacity:0;animation:numberPop 0.7s cubic-bezier(0.16,1,0.3,1) 0.15s forwards;}
+.fp-bg{position:absolute;inset:0;background-size:cover;background-position:center top;background:#1A1A1A;}
+.fp-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.15) 35%,rgba(0,0,0,0.88) 70%,rgba(0,0,0,0.97) 100%);}
+.fp-top{position:absolute;top:0;left:0;right:0;padding:1rem 1rem 0;display:flex;justify-content:space-between;}
+.fp-club{font-size:8px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.5);}
+.fp-stamp{font-size:8px;font-weight:600;letter-spacing:0.1em;color:#C9A84C;border:1px solid rgba(201,168,76,0.35);padding:2px 7px;border-radius:2px;}
+.fp-bottom{position:absolute;bottom:0;left:0;right:0;padding:1.1rem;text-align:left;}
+.fp-role{font-family:'Playfair Display',serif;font-style:italic;font-size:12px;color:#C9A84C;margin-bottom:5px;}
+.fp-name{font-family:'Playfair Display',serif;font-size:clamp(30px,8vw,40px);color:#fff;line-height:1;margin-bottom:10px;}
+.fp-stats{display:flex;gap:1rem;margin-bottom:8px;}
+.fp-stat-val{font-family:'Playfair Display',serif;font-size:17px;color:#C9A84C;line-height:1;}
+.fp-stat-lbl{font-size:7px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);}
+
+.share-actions{display:flex;gap:10px;margin-top:1.5rem;opacity:0;animation:fadeUp 0.6s ease 0.5s forwards;}
+.share-btn{font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:11px 22px;border-radius:4px;text-decoration:none;cursor:pointer;border:none;}
+.share-primary{background:#C9A84C;color:#1A1A1A;}
+.share-secondary{background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.25);}
+
+/* restart link */
+.restart-link{position:fixed;bottom:18px;left:0;right:0;text-align:center;font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase;z-index:100;}
+.restart-link a{color:rgba(255,255,255,0.5);text-decoration:underline;}
+
+.error-msg{padding:0 2rem;color:rgba(255,255,255,0.6);font-size:14px;line-height:1.6;}
+</style>
+</head>
+<body>
+
+<div id="loading">Loading your season…</div>
+
+<div class="stage" id="stage">
+  <div class="progress-row" id="progressRow"></div>
+  <div class="wrapped-header">
+    <div class="wrapped-brand">TCC WRAPPED</div>
+    <a href="#" class="wrapped-close" id="closeBtn">×</a>
+  </div>
+  <div class="card-wrap" id="cardWrap"></div>
+  <div class="tap-zone tap-left" id="tapLeft"></div>
+  <div class="tap-zone tap-right" id="tapRight"></div>
+  <div class="restart-link" id="restartLink" style="display:none;">tap to replay</div>
+</div>
+
+<script>
+const API='https://script.google.com/macros/s/AKfycbxeXMVQXnstNiWBpN4ljBQuKwiS02tnHSMRzJ_TZ3WFWID5CoCjOjt2fkxjLSHuPxYf/exec';
+const TMDB_KEY='b97ae7517bfb7f0af5594f16ca31c5f6';
+const TMDB_IMG='https://image.tmdb.org/t/p/w185';
+
+const TIERS=[
+  {min:8,label:'Certified Great',color:'#0F6E56'},
+  {min:6.5,label:'Good Watch',color:'#185FA5'},
+  {min:5,label:'Okay',color:'#854F0B'},
+  {min:0,label:'Never Again!',color:'#A32D2D'}
+];
+
+function getTier(s){return TIERS.find(t=>s>=t.min)||TIERS[TIERS.length-1];}
+function parseScore(r){const m=String(r||'').match(/[\d.]+/);return m?parseFloat(m[0]):NaN;}
+function avg(a){const v=a.filter(n=>!isNaN(n));return v.length?v.reduce((a,b)=>a+b,0)/v.length:NaN;}
+function getName(e){return(e.name||e.member||e['your name']||'').trim();}
+function getScore(e){return parseScore(e.score||e.rating||e['score (1\u201310)']||e['score (1-10)']||'0');}
+function getTitle(e){return(e.title||e.film||e['film title']||'').trim();}
+function stars(s){const n=Math.round(s/2);return '★'.repeat(Math.max(0,Math.min(5,n)))+'☆'.repeat(5-Math.max(0,Math.min(5,n)));}
+
+function parseDateSafe(raw){
+  if(!raw)return new Date(NaN);
+  const s=String(raw).trim();
+  const d=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(.*)/);
+  if(d)return new Date(`${d[3]}-${d[2].padStart(2,'0')}-${d[1].padStart(2,'0')}${d[4]}`);
+  return new Date(s);
+}
+
+async function safeFetch(sheet){
+  try{const r=await fetch(`${API}?sheet=${sheet}`);if(!r.ok)return[];return await r.json();}
+  catch{return[];}
+}
+
+async function getPoster(title){
+  try{
+    const r=await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${encodeURIComponent(title)}`);
+    const d=await r.json();
+    const p=d.results?.[0]?.poster_path;
+    return p?TMDB_IMG+p:null;
+  }catch{return null;}
+}
+
+let cards=[];
+let current=0;
+let autoTimer=null;
+
+function buildCard({bg,accent,html}){
+  const el=document.createElement('div');
+  el.className='card '+bg;
+  el.style.setProperty('--accent',accent||'#C9A84C');
+  el.innerHTML='<div class="grain"></div>'+html;
+  return el;
+}
+
+function showCard(i){
+  cards.forEach((c,idx)=>c.el.classList.toggle('active',idx===i));
+  // progress bars
+  const fills=document.querySelectorAll('.progress-fill');
+  fills.forEach((f,idx)=>{
+    f.classList.remove('animate','done');
+    void f.offsetWidth; // reflow restart
+    if(idx<i){f.classList.add('done');}
+    else if(idx===i){f.style.setProperty('--dur', (cards[i].dur||4)+'s'); f.classList.add('animate');}
+  });
+  clearTimeout(autoTimer);
+  document.getElementById('restartLink').style.display = (i===cards.length-1)?'block':'none';
+}
+
+function next(){
+  if(current<cards.length-1){current++;showCard(current);}
+  else{current=0;showCard(current);}
+}
+function prev(){
+  if(current>0){current--;showCard(current);}
+}
+
+async function loadWrapped(){
+  const params=new URLSearchParams(window.location.search);
+  const memberName=params.get('name')||'';
+  if(!memberName){
+    document.getElementById('loading').innerHTML='<div class="error-msg">No member specified. Add ?name=YourName to the link.</div>';
+    return;
+  }
+
+  const[entries,pointsRows,recoRows]=await Promise.all([
+    safeFetch('responses'),safeFetch('points'),safeFetch('reco_order')
+  ]);
+
+  const recoEntry=recoRows.find(r=>(r.member||r[Object.keys(r)[0]]||'').toLowerCase()===memberName.toLowerCase());
+  const photoUrl=recoEntry?.photo||recoEntry?.Photo||'';
+
+  const myEntries=entries.filter(e=>getName(e).toLowerCase()===memberName.toLowerCase());
+
+  if(!myEntries.length){
+    document.getElementById('loading').innerHTML=`<div class="error-msg">No reviews found yet for ${memberName}. Log a film first to unlock your Wrapped.</div>`;
+    return;
+  }
+
+  const myScores=myEntries.map(getScore).filter(n=>!isNaN(n));
+  const myAvg=avg(myScores);
+
+  // Points + ranking
+  const allMembers={};
+  entries.forEach(e=>{const n=getName(e);if(!allMembers[n])allMembers[n]={early:0,fotm:0,trivia:0,motm:0,deductions:0};});
+  const groups={};
+  entries.forEach(e=>{const t=getTitle(e)||'?';if(!groups[t])groups[t]=[];groups[t].push(e);});
+  Object.values(groups).forEach(revs=>{
+    const sorted=[...revs].sort((a,b)=>+parseDateSafe(a.timestamp||'')-+parseDateSafe(b.timestamp||''));
+    const ws=parseDateSafe(sorted[0]?.['week start']||'');
+    const wed=new Date(ws);
+    if(!isNaN(wed)){
+      wed.setDate(ws.getDate()+(3-ws.getDay()+7)%7);wed.setHours(18,0,0,0);
+      sorted.filter(e=>{const d=parseDateSafe(e.timestamp||'');return d>=ws&&d<wed;})
+        .slice(0,5).forEach((e,i)=>{
+          const n=getName(e);
+          if(!allMembers[n])allMembers[n]={early:0,fotm:0,trivia:0,motm:0,deductions:0};
+          allMembers[n].early+=[5,4,3,2,1][i];
+        });
+    }
+  });
+  pointsRows.forEach(r=>{
+    const n=(r.member||'').trim();
+    const type=(r['points type']||'').toLowerCase();
+    const pts=parseFloat(r.points||'0');
+    if(!n)return;
+    if(!allMembers[n])allMembers[n]={early:0,fotm:0,trivia:0,motm:0,deductions:0};
+    if(type.includes('early'))allMembers[n].early+=pts;
+    else if(type.includes('trivia'))allMembers[n].trivia+=pts;
+    else if(type.includes('fotm')||type.includes('film of month'))allMembers[n].fotm+=pts;
+    else if(type.includes('motm')||type.includes('member of month'))allMembers[n].motm+=pts;
+    else if(type.includes('deduction'))allMembers[n].deductions+=Math.abs(pts);
+  });
+  const myPts=allMembers[memberName]||{early:0,fotm:0,trivia:0,motm:0,deductions:0};
+  const myTotal=myPts.early+myPts.fotm+myPts.trivia+myPts.motm-myPts.deductions;
+  const ranked=Object.entries(allMembers).map(([n,p])=>({name:n,total:p.early+p.fotm+p.trivia+p.motm-p.deductions})).sort((a,b)=>b.total-a.total);
+  const myRank=ranked.findIndex(r=>r.name.toLowerCase()===memberName.toLowerCase())+1;
+  const totalMembers=ranked.length;
+  const percentile=myRank?Math.ceil((myRank/totalMembers)*100):null;
+
+  const personality=isNaN(myAvg)?'The Cinephile':myAvg>=8.5?'The Enthusiast':myAvg>=7?'The Balanced Critic':myAvg>=5.5?'The Discerning Eye':'The Harsh Critic';
+  const personalityLine={
+    'The Enthusiast':'You see the best in almost everything. The circle trusts your 9s — when you don\\'t give one, that\\'s the real warning sign.',
+    'The Balanced Critic':'Generous when a film earns it, ruthless when it doesn\\'t. The most trustworthy recommender in the room.',
+    'The Discerning Eye':'You don\\'t hand out high scores easily. When you rate something well, people pay attention.',
+    'The Harsh Critic':'Tough crowd, every time. Films have to work for your approval — and most don\\'t.',
+    'The Cinephile':'Still building your rating history. Every film logged adds to your story.'
+  }[personality];
+
+  const highScore=myScores.length?Math.max(...myScores):null;
+  const lowScore=myScores.length?Math.min(...myScores):null;
+  const highFilm=highScore!==null?getTitle(myEntries.find(e=>getScore(e)===highScore))||'':'';
+  const lowFilm=lowScore!==null?getTitle(myEntries.find(e=>getScore(e)===lowScore))||'':'';
+
+  const sortedByDate=[...myEntries].sort((a,b)=>+parseDateSafe(a.timestamp||'')-+parseDateSafe(b.timestamp||''));
+  const recentFilms=sortedByDate.slice(-5).map(getTitle).filter(Boolean);
+
+  const genreTierCounts=TIERS.map(t=>myScores.filter(s=>s>=t.min&&(TIERS[TIERS.indexOf(t)-1]?s<TIERS[TIERS.indexOf(t)-1].min:true)).length);
+  const dominantIdx=genreTierCounts.indexOf(Math.max(...genreTierCounts));
+  const genreLabels=['Certified Cinema','Quality Fare','Mixed Bag','Tough Crowd'];
+
+  // Fetch posters
+  const [highPoster, lowPoster, ...recentPosters] = await Promise.all([
+    highFilm?getPoster(highFilm):null,
+    (lowFilm&&lowFilm!==highFilm)?getPoster(lowFilm):null,
+    ...recentFilms.map(t=>getPoster(t))
+  ]);
+
+  // ===== BUILD CARDS =====
+  const wrap=document.getElementById('cardWrap');
+
+  // CARD 1 — Intro
+  cards.push({dur:3.5, el:buildCard({bg:'bg-dark',accent:'#C9A84C',html:`
+    <div class="eyebrow">The Cinematic Circle · Season 2026</div>
+    <div class="headline">${memberName},<br>here's your <em>season</em>.</div>
+    <div class="subtext">${myEntries.length} films watched. One circle. Let's see how it went.</div>
+  `})});
+
+  // CARD 2 — Films logged
+  cards.push({dur:4, el:buildCard({bg:'bg-gold',accent:'#C9A84C',html:`
+    <div class="eyebrow">Films Logged</div>
+    <div class="big-number">${myEntries.length}</div>
+    <div class="big-label">reviews this season</div>
+    ${recentPosters.filter(Boolean).length?`<div class="poster-row">${recentPosters.filter(Boolean).slice(0,5).map(p=>`<img class="mini-poster" src="${p}"/>`).join('')}</div>`:''}
+  `})});
+
+  // CARD 3 — Avg score / personality
+  cards.push({dur:5, el:buildCard({bg:'bg-blue',accent:'#5B9BD5',html:`
+    <div class="eyebrow">Rating Personality</div>
+    <div class="headline">You're <em>${personality}</em></div>
+    <div class="subtext">${personalityLine}</div>
+    <div class="mini-stat-row">
+      <div class="mini-stat"><div class="mini-stat-val">${isNaN(myAvg)?'—':myAvg.toFixed(1)}</div><div class="mini-stat-lbl">Avg Score</div></div>
+      <div class="mini-stat"><div class="mini-stat-val">${genreLabels[dominantIdx]}</div><div class="mini-stat-lbl">Taste Tag</div></div>
+    </div>
+  `})});
+
+  // CARD 4 — Highest rated film
+  if(highFilm){
+    cards.push({dur:4.5, el:buildCard({bg:'bg-green',accent:'#3FBF8F',html:`
+      <div class="eyebrow">Your Highest Rated</div>
+      ${highPoster?`<img class="film-card-poster" src="${highPoster}"/>`:''}
+      <div class="headline" style="font-size:clamp(20px,6vw,28px);">${highFilm}</div>
+      <div class="score-stars">${stars(highScore)} ${highScore.toFixed(1)}</div>
+    `})});
+  }
+
+  // CARD 5 — Lowest rated film
+  if(lowFilm && lowFilm!==highFilm){
+    cards.push({dur:4.5, el:buildCard({bg:'bg-red',accent:'#E05B5B',html:`
+      <div class="eyebrow">The One That Didn't Land</div>
+      ${lowPoster?`<img class="film-card-poster" src="${lowPoster}"/>`:''}
+      <div class="headline" style="font-size:clamp(20px,6vw,28px);">${lowFilm}</div>
+      <div class="score-stars">${stars(lowScore)} ${lowScore.toFixed(1)}</div>
+    `})});
+  }
+
+  // CARD 6 — Early watch
+  cards.push({dur:4, el:buildCard({bg:'bg-gold',accent:'#C9A84C',html:`
+    <div class="eyebrow">Early Watch Points</div>
+    <div class="big-number">${myPts.early}</div>
+    <div class="big-label">points earned for showing up early</div>
+    <div class="subtext" style="margin-top:1rem;">${myPts.early>=15?'You\\'re consistently first to the screen. The circle notices.':myPts.early>0?'On time when it counted.':'Plenty of room to beat the Wednesday deadline next season.'}</div>
+  `})});
+
+  // CARD 7 — Rank
+  cards.push({dur:4.5, el:buildCard({bg:'bg-dark',accent:'#C9A84C',html:`
+    <div class="eyebrow">Season Ranking</div>
+    <div class="big-number">#${myRank||'—'}</div>
+    <div class="big-label">out of ${totalMembers} members</div>
+    ${percentile?`<div class="subtext" style="margin-top:1rem;">That puts you in the top ${percentile}% of The Cinematic Circle this season.</div>`:''}
+    <div class="mini-stat-row">
+      <div class="mini-stat"><div class="mini-stat-val">${myTotal}</div><div class="mini-stat-lbl">Total Points</div></div>
+    </div>
+  `})});
+
+  // CARD 8 — Final shareable poster
+  const bgStyle = photoUrl ? `background-image:url('${photoUrl}')` : `background:linear-gradient(160deg,#1A1205 0%,#2A1A0A 40%,#0A0A1A 100%)`;
+  cards.push({dur:9999, el:buildCard({bg:'bg-poster',accent:'#C9A84C',html:`
+    <div class="eyebrow">Your Season, Captured</div>
+    <div class="final-poster">
+      <div class="fp-bg" style="${bgStyle}"></div>
+      <div class="fp-overlay"></div>
+      <div class="fp-top">
+        <div class="fp-club">The Cinematic Circle</div>
+        <div class="fp-stamp">TCC 2026</div>
+      </div>
+      <div class="fp-bottom">
+        <div class="fp-role">${personality}</div>
+        <div class="fp-name">${memberName}</div>
+        <div class="fp-stats">
+          <div><div class="fp-stat-val">${myEntries.length}</div><div class="fp-stat-lbl">Reviews</div></div>
+          <div><div class="fp-stat-val">${isNaN(myAvg)?'—':myAvg.toFixed(1)}</div><div class="fp-stat-lbl">Avg</div></div>
+          <div><div class="fp-stat-val">#${myRank||'—'}</div><div class="fp-stat-lbl">Rank</div></div>
+          <div><div class="fp-stat-val">${myTotal}</div><div class="fp-stat-lbl">Pts</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="share-actions">
+      <button class="share-btn share-primary" onclick="shareWrapped('${memberName.replace(/'/g,"\\\\'")}')">Share</button>
+      <a class="share-btn share-secondary" href="profile.html?name=${encodeURIComponent(memberName)}" target="_blank">Full Profile</a>
+    </div>
+  `})});
+
+  cards.forEach(c=>wrap.appendChild(c.el));
+
+  // progress bars
+  const progressRow=document.getElementById('progressRow');
+  cards.forEach(()=>{
+    const track=document.createElement('div');
+    track.className='progress-track';
+    const fill=document.createElement('div');
+    fill.className='progress-fill';
+    track.appendChild(fill);
+    progressRow.appendChild(track);
+  });
+
+  document.getElementById('loading').style.display='none';
+  document.getElementById('stage').classList.add('ready');
+  showCard(0);
+
+  document.getElementById('tapLeft').addEventListener('click',prev);
+  document.getElementById('tapRight').addEventListener('click',next);
+  document.getElementById('closeBtn').addEventListener('click',e=>{
+    e.preventDefault();
+    window.location.href='profile.html?name='+encodeURIComponent(memberName);
+  });
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight')next();
+    if(e.key==='ArrowLeft')prev();
+  });
+}
+
+function shareWrapped(name){
+  const url=window.location.href;
+  if(navigator.share){
+    navigator.share({title:'TCC Wrapped — '+name,text:'My season with The Cinematic Circle 🎬',url}).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(url).then(()=>alert('Link copied! Paste it anywhere to share.'));
+  }
+}
+
+loadWrapped();
+</script>
+</body>
+</html>
